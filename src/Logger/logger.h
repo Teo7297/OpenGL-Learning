@@ -11,5 +11,6 @@ public:
     static void log(std::string);
     static void warning(std::string);
     static void error(std::string);
+    static void success(std::string);
     static void logProjectInfo();
 };
