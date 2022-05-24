@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.0.0)
 project(TheChernoTutorial VERSION 0.1.0)
 set(PROJECT_OWNER "Matteo Cavagnino")
 
+
+add_compile_definitions(GLEW_STATIC)
+if(GLEW_STATIC)
+    message(STATUS "You are building using the static GLEW library")
+else()
+    message(STATUS "You are NOT building using the static GLEW library")    
+endif()
+
+
 add_subdirectory(src)
 
 #################### SUBMODULES #################################
@@ -26,6 +35,7 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt")
 endif()
 
 add_subdirectory(external/glfw)
+
 #################### END OF SUMBMODULES #########################
 
 
