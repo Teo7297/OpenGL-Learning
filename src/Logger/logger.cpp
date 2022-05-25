@@ -23,7 +23,7 @@ void Logger::warning(std::string msg)
               << "[warning]: " << msg << "\033[0m\n";
 }
 
-void Logger::error(std::string msg)
+void Logger::success(std::string msg)
 {
     std::cout << "\033[;32m"
               << "[error]: " << msg << "\033[0m\n";

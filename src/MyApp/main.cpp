@@ -34,46 +34,40 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << "\n";
 
+    //* data for the buffer to render
     float positions[6] =
     {
-        -0.5f, -0.5f,
-         0.0f,  0.5f,
-         0.5f, -0.5f
+        -0.5f, -0.5f,   // position of vertex 1
+         0.0f,  0.5f,   // position of vertex 2
+         0.5f, -0.5f    // position of vertex 3
     };
 
-    // id for the buffer that we are generating
+    //* id for the buffer that we are generating
     unsigned int buffer;
-    // generate 1 buffer
+    //* generate 1 buffer
     glGenBuffers(1, &buffer);
 
-    // select the generated buffer as a normal array buffer
+    //* select the generated buffer as a normal array buffer
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-    // set the size(in bytes) or directly initialize it with vertex data
+    //* set the size(in bytes) or directly initialize it with vertex data
     // choose between static and dynamic to tell if data will be modified or not and draw or read depending on what we do with the data (we draw static now)
     glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
 
-        /* Loop until the user closes the window */
+    // Enable the vertex
+    glEnableVertexAttribArray(0);
+    // Set vertex attribute POSITION
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //# Glew OpenGL
-        // drawCall
+        //* drawCall
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        //# Legacy OpenGL
-        // glBegin(GL_TRIANGLES);
-        // glVertex2f(-0.5f, -0.5f);
-        // glVertex2f( 0.0f,  0.5f);
-        // glVertex2f( 0.5f, -0.5f);
-        // glEnd();
-
-        /* Swap front and back buffers */
+        
         glfwSwapBuffers(window);
-
-        /* Poll for and process events */
         glfwPollEvents();
     }
 
