@@ -13,6 +13,10 @@ endif()
 
 add_subdirectory(src)
 
+# copy resource files into build folder for debug purposes
+file(COPY "${PROJECT_SOURCE_DIR}/res/shaders" DESTINATION "src/MyApp/Debug/res/")
+file(COPY "${PROJECT_SOURCE_DIR}/res/shaders" DESTINATION "src/MyApp/Release/res/")
+
 #################### SUBMODULES #################################
 
 find_package(Git QUIET)
@@ -44,6 +48,7 @@ add_subdirectory(external/glfw)
 # CMake install
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)                                    # exe file goes to bin filder
 install(FILES "${PROJECT_BINARY_DIR}/src/ProjectConfig.h" DESTINATION include)        # config file goes to include folder
+install(DIRECTORY "${PROJECT_BINARY_DIR}/res/shaders" DESTINATION "res/")
 
 
 # CPack install

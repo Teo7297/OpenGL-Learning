@@ -5,6 +5,59 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <logger.h>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <filesystem>
+
+//* Returning multiple objects from a function (using a tuple for example) is bad, instead it's better to use a struct like this:
+struct ShaderProgramSource
+{
+    std::string VertexSource;
+    std::string FragmentSource;
+};
+
+// here we return the struct with the parsed shaders! very cool
+static ShaderProgramSource ParseShader(const std::string &filepath)
+{
+    // cpp style file handling is slower but easier to read than c-style
+    std::ifstream stream(filepath); //? open the file
+
+    enum class ShaderType
+    {
+        NONE = -1,
+        VERTEX = 0,
+        FRAGMENT = 1
+    };
+
+    std::stringstream ss[2]; //? stack allocated array of stringstream, one for vertex one for fragment
+
+    //* Parse line by line, getline is part of string lib
+    std::string line;
+    ShaderType type = ShaderType::NONE;
+    while (getline(stream, line))
+    {
+        //* if first line check the type of the shader we are parsing
+        if (line.find("#shader") != std::string::npos) //? npos means it did NOT find it, so not not :)
+        {
+            if (line.find("vertex") != std::string::npos)
+            {
+                type = ShaderType::VERTEX;
+            }
+            else if (line.find("fragment") != std::string::npos)
+            {
+                type = ShaderType::FRAGMENT;
+            }
+        }
+        //* otherwise parse the next line of the shader file
+        else
+        {
+            //? Using enum values to actually determine the shader position in the array (wow)
+            ss[(int)type] << line << "\n";
+        }
+    }
+    return ShaderProgramSource{ss[0].str(), ss[1].str()}; //? It's not needed to add ShaderProgramSource, i put it for clarity
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string &source)
 {
@@ -129,32 +182,12 @@ int main(void)
     // Set vertex attribute POSITION
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-    std::string vertexShader =
-        // 330 is the version, core uses non deprecated functions
-        "#version 410 core\n"
-        "\n"
-        // location is the index of our vertex attrib
-        // gl_Position wants a vec4, we could convert it manually later but it's better to do this here.
-        // it knows we gave a vec2, we passed 2 as argument in vertexAttribPointer
-        "layout(location = 0) in vec4 position;"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = position;\n"
-        "}\n";
+    //! Check ac64ecf18 commit for string shaders
+    
 
-    std::string fragmentShader =
-        "#version 410 core\n"
-        "\n"
-        "layout(location = 0) out vec4 color;"
-        "\n"
-        "void main()\n"
-        "{\n"
-        // 4th parameter is the alpha value, colors are floats between 0.0 and 1.0 (for no HDR at least)
-        "   color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
+    ShaderProgramSource source = ParseShader("res\\shaders\\Basic.shader"); //? Relative paths start from the working dir, with an exe it's the dir containing the exe file
 
-    unsigned int shader = CreateShader(vertexShader, fragmentShader);
+    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 
     //! We still need to bind the shader
     glUseProgram(shader);

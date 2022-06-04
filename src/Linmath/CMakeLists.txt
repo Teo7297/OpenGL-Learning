@@ -1,4 +1,4 @@
-add_library(linmath linmath.cpp)
+add_library(linmath null.cpp)
 
 target_include_directories(linmath PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
