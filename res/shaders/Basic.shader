@@ -16,5 +16,8 @@ layout(location = 0) out vec4 color;
 
 void main()
 {
-    color = vec4(1.0, 1.0, 0.0, 1.0);
+    float red = 0.0;
+    float green = 0.5;
+    float blue = 1.0;
+    color = vec4(red, green, blue, 1.0);   
 };
