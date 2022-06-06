@@ -19,5 +19,6 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC
     renderer
     vertexBuffer
     indexBuffer
+    vertexArray
     ${EXTRA_LINKS}
 )

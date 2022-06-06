@@ -1,6 +1,6 @@
-add_library(vertexBuffer VertexBuffer.cpp)
+add_library(vertexBuffer VertexBuffer.cpp VertexBufferLayout.cpp)
 
-target_link_libraries(vertexBuffer renderer)
+target_link_libraries(vertexBuffer renderer glew_s)
 
 target_include_directories(vertexBuffer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

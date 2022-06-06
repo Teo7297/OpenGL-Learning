@@ -11,6 +11,7 @@
 #include <Renderer.h>
 #include <VertexBuffer.h>
 #include <IndexBuffer.h>
+#include <VertexArray.h>
 
 //* Returning multiple objects from a function (using a tuple for example) is bad, instead it's better to use a struct like this:
 struct ShaderProgramSource
@@ -180,11 +181,13 @@ int main(void)
         GLCall(glGenVertexArrays(1, &vao));
         GLCall(glBindVertexArray(vao));
 
+        VertexArray va;
         VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
-        // Vertex settings
-        GLCall(glEnableVertexAttribArray(0));
-        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
+
 
         // Index buffer openGL (ibo = Index Buffer Object)
         IndexBuffer ib(indices, 6);
@@ -214,7 +217,7 @@ int main(void)
             GLCall(glUseProgram(shader));                       //* bind shader
             GLCall(glUniform4f(location, r, 0.0f, 0.0f, 1.0f)); //* set uniform
 
-            GLCall(glBindVertexArray(vao));
+            va.Bind();
             ib.Bind(); //* bind vertex buffer
 
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); //* drawCall
