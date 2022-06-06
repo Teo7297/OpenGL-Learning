@@ -10,7 +10,6 @@ else()
     message(STATUS "You are NOT building using the static GLEW library")    
 endif()
 
-
 add_subdirectory(src)
 
 # copy resource files into build folder for debug purposes
