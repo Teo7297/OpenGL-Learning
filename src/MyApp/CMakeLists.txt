@@ -20,5 +20,6 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC
     vertexBuffer
     indexBuffer
     vertexArray
+    shader
     ${EXTRA_LINKS}
 )
