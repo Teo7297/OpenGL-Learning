@@ -1,13 +1,15 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <VertexArray.h>
+#include <IndexBuffer.h>
+#include <Shader.h>
 
 
 #define ASSERT(x) \
     if (!(x))     \
         __debugbreak(); // __ is for the compiler, this only works for msvc
 
-//! We should wrap every openGL function with this macro! (does need a cople more things to work everywhere like in ifs and assignments)
 #define GLCall(x)   \
     GLClearError(); \
     x;              \
@@ -18,4 +20,13 @@ void GLClearError();
 // Callback to log errors
 bool GLLogCall(const char *function, const char *file, int line);
 
-
+class Renderer
+{
+private:
+    
+public:
+    // Renderer();
+    // ~Renderer();
+    void Clear() const;
+    void Draw(const VertexArray &va, const IndexBuffer &ib, const Shader &shader) const;
+};
