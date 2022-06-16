@@ -84,10 +84,8 @@ int main(void)
         IndexBuffer ib(indices, 6);
 
         // MVP matrix
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 0.0f));
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
         glm::mat4 proj = glm::ortho(-0.0f, 960.0f, -0.0f, 540.0f, -1.0f, 1.0f);
-        glm::mat4 mvp = proj * view * model; //? Mind the reverse order!
 
         // Shaders
         Shader shader("res\\shaders\\Basic.shader");
@@ -101,8 +99,6 @@ int main(void)
         texture.Bind(0);
         shader.SetUniform1i("u_Texture", 0);
 
-        shader.SetUniformMat4f("u_MVP", mvp);
-
         // Unbind everything
         va.Unbind();
         shader.Unbind();
@@ -114,16 +110,14 @@ int main(void)
         // ImGUI setup
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO &io = ImGui::GetIO(); 
+        ImGuiIO &io = ImGui::GetIO();
         (void)io;
         ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init((char *)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
 
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         // Render cycle
+        glm::vec3 translation(200.0f, 200.0f, 0.0f);
         while (!glfwWindowShouldClose(window))
         {
             renderer.Clear();
@@ -132,30 +126,18 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model; //? Mind the reverse order!
+
             shader.Bind();
+            shader.SetUniformMat4f("u_MVP", mvp);
 
             renderer.Draw(va, ib, shader);
 
             {
-                static float f = 0.0f;
-                static int counter = 0;
 
-                ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
-
-                ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
-                ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
-                ImGui::Checkbox("Another Window", &show_another_window);
-
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
-                ImGui::ColorEdit3("clear color", (float *)&clear_color); // Edit 3 floats representing a color
-
-                if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
-
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                ImGui::End();
             }
 
             ImGui::Render();
