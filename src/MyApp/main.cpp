@@ -27,7 +27,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);                 // openGL v3.3
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use openGL core profile
 
-    window = glfwCreateWindow(480, 480, "OpenGL Learning Project", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "OpenGL Learning Project", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -61,8 +61,8 @@ int main(void)
             0, 1, 2,
             2, 3, 0};
 
-        GLCall(glEnable(GL_BLEND));                                 // Texture blending enable
-        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA)); // Texture blending function setting
+        GLCall(glEnable(GL_BLEND));                                 //# Texture blending enable
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA)); //# Texture blending function setting
 
         VertexArray va;
         VertexBuffer vb(positions, 4 * 4 * sizeof(float));
