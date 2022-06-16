@@ -19,5 +19,6 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC
     shader
     stb_image
     texture
+    imgui
     ${EXTRA_LINKS}
 )
