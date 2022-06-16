@@ -46,6 +46,7 @@ endif()
 
 # external libraries
 add_subdirectory(external/glfw)
+add_subdirectory(external/glm)
 add_subdirectory(external/glad)
 add_subdirectory(external/stb_image)
 

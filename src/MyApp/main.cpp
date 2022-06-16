@@ -16,6 +16,10 @@
 #include <Shader.h>
 #include <Texture.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
 int main(void)
 {
     // GLFW boilerplate code
@@ -50,7 +54,8 @@ int main(void)
         // Vertex buffer
         float positions[] =
             {
-                -0.5f, -0.5f, 0.0f, 0.0f, // vertex 0
+                // vertices with texture coords
+                -0.5f, -0.5f, 0.0f, 0.0f, // vertex 0 
                 0.5f, -0.5f, 1.0f, 0.0f,  // vertex 1
                 0.5f, 0.5f, 1.0f, 1.0f,   // vertex 2
                 -0.5f, 0.5f, 0.0f, 1.0f   // vertex 3
@@ -75,6 +80,18 @@ int main(void)
         // Index buffer openGL (ibo = Index Buffer Object)
         IndexBuffer ib(indices, 6);
 
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);  // We create a 4x4 orthographic matrix
+                                                                             // We specify values to adhere to the 4/3 aspect ratio
+                                                                             // An ortho matrix is a way to map coords into a 2D plane where "far" objects do not get smaller.
+                                                                             // It's the opposite of a perspective matrix
+                                                                             //? This is perfect for 2D stuff
+
+
+
+
+
+
+
         // Shaders
         Shader shader("res\\shaders\\Basic.shader");
         shader.Bind();
@@ -86,6 +103,8 @@ int main(void)
         Texture texture("res\\textures\\avatar.png");
         texture.Bind(0);
         shader.SetUniform1i("u_Texture", 0);
+
+        shader.SetUniformMat4f("u_MVP", proj);
 
         // Unbind everything
         va.Unbind();
