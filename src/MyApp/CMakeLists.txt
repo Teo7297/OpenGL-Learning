@@ -6,20 +6,17 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 external/glfw/include
 )
 
-if(USE_LOGGER)
-    list(APPEND EXTRA_LINKS Logger)
-endif()
-
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC
     opengl32
     glfw
     glad
-    linmath
     glew_s
     renderer
     vertexBuffer
     indexBuffer
     vertexArray
     shader
+    stb_image
+    texture
     ${EXTRA_LINKS}
 )

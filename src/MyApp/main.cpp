@@ -14,6 +14,7 @@
 #include <IndexBuffer.h>
 #include <VertexArray.h>
 #include <Shader.h>
+#include <Texture.h>
 
 int main(void)
 {
@@ -26,7 +27,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);                 // openGL v3.3
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use openGL core profile
 
-    window = glfwCreateWindow(640, 480, "Triangle", NULL, NULL);
+    window = glfwCreateWindow(480, 480, "OpenGL Learning Project", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -44,14 +45,15 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << "\n";
 
-    // Vertices buffer
     { // This scope is to fix the issue of the vertexBuffer being destroyed AFTER the context because its stack allocated
+
+        // Vertex buffer
         float positions[] =
             {
-                -0.5f, -0.5f, // vertex 0
-                0.5f, -0.5f,  // vertex 1
-                0.5f, 0.5f,   // vertex 2
-                -0.5f, 0.5f,  // vertex 3
+                -0.5f, -0.5f, 0.0f, 0.0f, // vertex 0
+                0.5f, -0.5f, 1.0f, 0.0f,  // vertex 1
+                0.5f, 0.5f, 1.0f, 1.0f,   // vertex 2
+                -0.5f, 0.5f, 0.0f, 1.0f   // vertex 3
             };
 
         // Index buffer
@@ -59,15 +61,14 @@ int main(void)
             0, 1, 2,
             2, 3, 0};
 
-        // Vertex buffer openGL
-        unsigned int vao;
-        GLCall(glGenVertexArrays(1, &vao));
-        GLCall(glBindVertexArray(vao));
+        GLCall(glEnable(GL_BLEND));                                 // Texture blending enable
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA)); // Texture blending function setting
 
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
@@ -79,7 +80,12 @@ int main(void)
         shader.Bind();
 
         // Uniforms
-        shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        // shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+
+        // Textures
+        Texture texture("res\\textures\\avatar.png");
+        texture.Bind(0);
+        shader.SetUniform1i("u_Texture", 0);
 
         // Unbind everything
         va.Unbind();
@@ -89,28 +95,20 @@ int main(void)
 
         Renderer renderer;
 
-        float r = 0.0f;
-        float increment = 0.01f;
         // Render cycle
         while (!glfwWindowShouldClose(window))
         {
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUniform4f("u_Color", r, 0.0f, 0.0f, 1.0f);
 
             renderer.Draw(va, ib, shader);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
-
-            if (r > 1.0f)
-                increment = -0.01f;
-            else if (r < 0.0f)
-                increment = 0.01f;
-            r += increment;
         }
     }
+
     glfwTerminate();
 
     return 0;

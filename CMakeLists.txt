@@ -16,6 +16,9 @@ add_subdirectory(src)
 file(COPY "${PROJECT_SOURCE_DIR}/res/shaders" DESTINATION "src/MyApp/Debug/res/")
 file(COPY "${PROJECT_SOURCE_DIR}/res/shaders" DESTINATION "src/MyApp/Release/res/")
 
+file(COPY "${PROJECT_SOURCE_DIR}/res/textures" DESTINATION "src/MyApp/Debug/res/")
+file(COPY "${PROJECT_SOURCE_DIR}/res/textures" DESTINATION "src/MyApp/Release/res/")
+
 #################### SUBMODULES #################################
 
 find_package(Git QUIET)
@@ -37,7 +40,10 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
+# external libraries
 add_subdirectory(external/glfw)
+add_subdirectory(external/glad)
+add_subdirectory(external/stb_image)
 
 #################### END OF SUMBMODULES #########################
 
@@ -48,6 +54,7 @@ add_subdirectory(external/glfw)
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)                                    # exe file goes to bin filder
 install(FILES "${PROJECT_BINARY_DIR}/src/ProjectConfig.h" DESTINATION include)        # config file goes to include folder
 install(DIRECTORY "${PROJECT_BINARY_DIR}/res/shaders" DESTINATION "res/")
+install(DIRECTORY "${PROJECT_BINARY_DIR}/res/textures" DESTINATION "res/")
 
 
 # CPack install
