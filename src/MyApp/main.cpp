@@ -52,9 +52,13 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << "\n";
 
-    { // This scope is to fix the issue of the vertexBuffer being destroyed AFTER the context because its stack allocated
+    // Enable blending
+    GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA));
 
-        // Vertex buffer
+    { // This scope is a hacky way of fixing the issue of the vertexBuffer being destroyed AFTER the context because its stack allocated
+
+        // Vertex buffer setup
         float positions[] =
             {
                 // vertices with texture coords
@@ -63,15 +67,7 @@ int main(void)
                 50.0f, 50.0f, 1.0f, 1.0f,   // vertex 2
                 -50.0f, 50.0f, 0.0f, 1.0f   // vertex 3
             };
-
-        // Index buffer
-        unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0};
-
-        GLCall(glEnable(GL_BLEND));                                 //# Texture blending enable
-        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA)); //# Texture blending function setting
-
+        
         VertexArray va;
         VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
@@ -80,32 +76,42 @@ int main(void)
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
-        // Index buffer openGL (ibo = Index Buffer Object)
+
+        // Index buffer setup
+        unsigned int indices[] = {
+            0, 1, 2,
+            2, 3, 0};
+
         IndexBuffer ib(indices, 6);
+
 
         // MVP matrix
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         glm::mat4 proj = glm::ortho(-0.0f, 960.0f, -0.0f, 540.0f, -1.0f, 1.0f);
 
-        // Shaders
+
+        // Shader initialization
         Shader shader("res\\shaders\\Basic.shader");
         shader.Bind();
 
-        // Uniforms
-        // shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-        // Textures
+        // Texture initialization
         Texture texture("res\\textures\\avatar.png");
         texture.Bind(0);
+
         shader.SetUniform1i("u_Texture", 0);
 
-        // Unbind everything
+
+        // Setup complete, unbind everything
         va.Unbind();
-        shader.Unbind();
         vb.Unbind();
         ib.Unbind();
+        shader.Unbind();
 
+
+        // Renderer initialization
         Renderer renderer;
+
 
         // ImGUI setup
         IMGUI_CHECKVERSION();
@@ -116,17 +122,23 @@ int main(void)
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init((char *)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
 
-        // Render cycle
+
+        // Render cycle variables
         glm::vec3 translationA(200.0f, 200.0f, 0.0f);
         glm::vec3 translationB(400.0f, 200.0f, 0.0f);
+
+        // Render cycle
         while (!glfwWindowShouldClose(window))
         {
+            // Clear the renderer buffer
             renderer.Clear();
-
+            
+            // ImGUI frame rendering
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            // Object 1 rendering
             {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
                 glm::mat4 mvp = proj * view * model;
@@ -135,7 +147,8 @@ int main(void)
 
                 renderer.Draw(va, ib, shader);
             }
-
+            
+            // Object 2 rendering
             {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
                 glm::mat4 mvp = proj * view * model;
@@ -145,24 +158,31 @@ int main(void)
                 renderer.Draw(va, ib, shader);
             }
 
+            // ImGUI UI composition
             {
                 ImGui::SliderFloat3("TranslationA", &translationA.x, 0.0f, 960.0f);
                 ImGui::SliderFloat3("TranslationB", &translationB.x, 0.0f, 960.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             }
 
+            // ImGUI rendering
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+            // GLFW buffer swap
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
     }
+
+    // ImGUI shutdown
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+    // GLFW termination
     glfwTerminate();
 
+    // App termination
     return 0;
 }
