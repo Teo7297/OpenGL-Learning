@@ -16,3 +16,5 @@ add_subdirectory(indexBuffer)
 add_subdirectory(vertexArray)
 add_subdirectory(shader)
 add_subdirectory(texture)
+
+add_subdirectory(tests)
