@@ -1,0 +1,10 @@
+tests:
+
+- setup a menu
+    - select a tests from a list
+    - if i go back to home, destroy the test
+
+- test types:
+    - texture
+    - quad with vertex color (customizable)
+    - quad with uniform (customizable)

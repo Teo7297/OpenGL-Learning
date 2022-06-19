@@ -1,4 +1,4 @@
-add_library(test TestClearColor.cpp)
+add_library(test Test.cpp TestClearColor.cpp)
 
 target_link_libraries(test renderer imgui)
 
