@@ -63,6 +63,12 @@
         "xtree": "cpp",
         "filesystem": "cpp",
         "fstream": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "array": "cpp",
+        "cstdarg": "cpp",
+        "functional": "cpp",
+        "random": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp"
     }
 }
